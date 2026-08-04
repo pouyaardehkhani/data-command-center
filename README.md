@@ -1,6 +1,18 @@
 # Data Command Center
 
-A Format Factory–style media toolbox for Windows: convert, edit, and download video, audio, and images with GPU-accelerated encoding, batch processing, presets, and a dark/light UI — all built on **ffmpeg** and **yt-dlp**.
+<p align="center">
+  <img src="LOGO.png" alt="DCC Logo" width="720" height="300">
+</p>
+
+A Windows media toolbox for converting, editing, merging, splitting, and downloading video, audio, and images with FFmpeg, yt-dlp, GPU acceleration, batch processing, presets, and a modern dark/light interface — all built on **ffmpeg** and **yt-dlp**.
+
+![Platform](https://img.shields.io/badge/platform-Windows-blue)
+![Python](https://img.shields.io/badge/python-3.12-green)
+![License](https://img.shields.io/badge/license-MIT-brightgreen)
+![Release](https://img.shields.io/badge/release-v1.0-orange)
+---
+
+
 
 ## Features
 
