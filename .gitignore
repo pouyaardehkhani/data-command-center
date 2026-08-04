@@ -1,0 +1,33 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+
+# --- Virtual environment ---
+.venv/
+venv/
+env/
+
+# --- PyInstaller build output ---
+build/
+dist/
+*.spec.bak
+
+# --- Editor / OS cruft ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Local logs / scratch ---
+*.log
+scratchtest/
+
+# --- Large bundled binaries (exceed GitHub's 100MB push limit) ---
+# yt-dlp.exe (~18MB) and FFMPEG_LICENSE.txt stay tracked; download these two
+# separately (see README "Setup" section) and drop them into bin/.
+bin/ffmpeg.exe
+bin/ffprobe.exe
