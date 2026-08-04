@@ -21,6 +21,7 @@ dist/
 .DS_Store
 Thumbs.db
 desktop.ini
+.claude/
 
 # --- Local logs / scratch ---
 *.log
