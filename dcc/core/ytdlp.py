@@ -82,6 +82,29 @@ class VideoInfo:
     formats: list = field(default_factory=list)
 
 
+def _parse_formats(raw_formats: list) -> list:
+    formats = []
+    for f in raw_formats:
+        exact_size = f.get("filesize") or 0
+        approx_size = f.get("filesize_approx") or 0
+        formats.append(VideoFormat(
+            format_id=f.get("format_id", ""),
+            ext=f.get("ext", ""),
+            resolution=f.get("format_note") or (f"{f.get('width', '')}x{f.get('height', '')}" if f.get("width") else ""),
+            fps=f.get("fps") or 0,
+            vcodec=f.get("vcodec", "none") or "none",
+            acodec=f.get("acodec", "none") or "none",
+            filesize_approx=exact_size or approx_size,
+            filesize_is_approx=not exact_size and bool(approx_size),
+            note=f.get("format_note", "") or "",
+            height=f.get("height") or 0,
+            width=f.get("width") or 0,
+            tbr=f.get("tbr") or f.get("vbr") or 0.0,
+            abr=f.get("abr") or (f.get("tbr") or 0.0 if f.get("vcodec", "none") in ("", "none") else 0.0),
+        ))
+    return formats
+
+
 def fetch_info(url: str, timeout: int = 45, cookies_file: str = "") -> VideoInfo:
     args = [ytdlp_path(), "-J", "--no-warnings", "--flat-playlist"]
     if cookies_file:
@@ -104,34 +127,73 @@ def fetch_info(url: str, timeout: int = 45, cookies_file: str = "") -> VideoInfo
             webpage_url=url,
         )
 
-    formats = []
-    for f in data.get("formats", []):
-        exact_size = f.get("filesize") or 0
-        approx_size = f.get("filesize_approx") or 0
-        formats.append(VideoFormat(
-            format_id=f.get("format_id", ""),
-            ext=f.get("ext", ""),
-            resolution=f.get("format_note") or (f"{f.get('width', '')}x{f.get('height', '')}" if f.get("width") else ""),
-            fps=f.get("fps") or 0,
-            vcodec=f.get("vcodec", "none") or "none",
-            acodec=f.get("acodec", "none") or "none",
-            filesize_approx=exact_size or approx_size,
-            filesize_is_approx=not exact_size and bool(approx_size),
-            note=f.get("format_note", "") or "",
-            height=f.get("height") or 0,
-            width=f.get("width") or 0,
-            tbr=f.get("tbr") or f.get("vbr") or 0.0,
-            abr=f.get("abr") or (f.get("tbr") or 0.0 if f.get("vcodec", "none") in ("", "none") else 0.0),
-        ))
-
     return VideoInfo(
         title=data.get("title", url),
         duration=float(data.get("duration") or 0),
         uploader=data.get("uploader", ""),
         thumbnail=data.get("thumbnail", ""),
         webpage_url=data.get("webpage_url", url),
-        formats=formats,
+        formats=_parse_formats(data.get("formats", [])),
     )
+
+
+def fetch_playlist_common_formats(url: str, cookies_file: str = "", timeout: int = 3600,
+                                   on_progress=None) -> tuple:
+    """Fetches full per-video metadata for every item in the playlist (same one-by-one
+    extraction `yt-dlp -F` does) and intersects each video's format_ids, so the caller
+    can offer only the qualities available on every video in the playlist. This makes
+    one network request per video - it's slow for large playlists, so it should be run
+    off the UI thread; on_progress(videos_checked, current_title) is called after each one.
+
+    Returns (common_formats, video_count) where common_formats is a list of
+    representative VideoFormat objects (taken from the first video) for every
+    format_id shared by all videos.
+    """
+    args = [ytdlp_path(), "-j", "--no-warnings", "--yes-playlist", "--ignore-errors"]
+    if cookies_file:
+        args += ["--cookies", cookies_file]
+    args += [url]
+
+    proc = subprocess.Popen(
+        args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        creationflags=NO_WINDOW_FLAGS, bufsize=1,
+    )
+
+    common_ids = None
+    representative = {}
+    count = 0
+    try:
+        for line in proc.stdout:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                data = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            count += 1
+            entry_formats = [f for f in _parse_formats(data.get("formats", [])) if f.ext != "mhtml"]
+            entry_ids = {f.format_id for f in entry_formats}
+            if common_ids is None:
+                common_ids = entry_ids
+                representative = {f.format_id: f for f in entry_formats}
+            else:
+                common_ids &= entry_ids
+            if on_progress:
+                on_progress(count, data.get("title", ""))
+    finally:
+        stderr_text = proc.stderr.read()
+        try:
+            proc.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            raise RuntimeError("Timed out checking playlist formats")
+
+    if count == 0:
+        raise RuntimeError(stderr_text.strip() or "yt-dlp failed to fetch playlist formats")
+
+    common_formats = [representative[fid] for fid in (common_ids or set())]
+    return common_formats, count
 
 
 def build_download_args(url: str, output_dir: str, format_selector: str,

@@ -37,6 +37,26 @@ class _UpdateThread(QThread):
         self.done.emit(success, message)
 
 
+class _PlaylistFormatsThread(QThread):
+    progress = Signal(int, str)
+    done = Signal(object, int, str)
+
+    def __init__(self, url: str, cookies_file: str = "", parent=None):
+        super().__init__(parent)
+        self._url = url
+        self._cookies_file = cookies_file
+
+    def run(self):
+        try:
+            formats, video_count = ytdlp.fetch_playlist_common_formats(
+                self._url, cookies_file=self._cookies_file,
+                on_progress=lambda count, title: self.progress.emit(count, title),
+            )
+            self.done.emit(formats, video_count, "")
+        except Exception as e:
+            self.done.emit([], 0, str(e))
+
+
 def _short_message(text: str, limit: int = 160) -> str:
     """Keeps long yt-dlp error output from stretching the page wider than the
     window - the full text is still available via tooltip."""
@@ -53,6 +73,9 @@ class YoutubeDownloaderPage(QWidget):
         self._info = None
         self._thread = None
         self._update_thread = None
+        self._playlist_thread = None
+        self._playlist_total = 0
+        self._playlist_fetch_token = 0
 
         self.url_edit = QLineEdit()
         self.url_edit.setPlaceholderText("https://www.youtube.com/watch?v=… (also works for playlist URLs)")
@@ -201,16 +224,18 @@ class YoutubeDownloaderPage(QWidget):
         self.meta_label.setToolTip("")
         if info.is_playlist:
             self.title_label.setText(f"Playlist: {info.title}")
-            self.meta_label.setText(f"{info.playlist_count} videos")
             self.playlist_check.setChecked(True)
+            self._start_playlist_formats_fetch(info.webpage_url or self.url_edit.text().strip(), info.playlist_count)
             return
 
         self.title_label.setText(info.title)
         mins = int(info.duration // 60)
         secs = int(info.duration % 60)
         self.meta_label.setText(f"{info.uploader} · {mins}:{secs:02d}")
+        self._populate_format_combos(info.formats)
 
-        usable = [f for f in info.formats if f.ext not in ("mhtml",)]
+    def _populate_format_combos(self, formats, video_suffix: str = "", audio_suffix: str = ""):
+        usable = [f for f in formats if f.ext not in ("mhtml",)]
         video_only = sorted((f for f in usable if f.is_video_only), key=lambda f: f.video_sort_key, reverse=True)
         audio_only = sorted((f for f in usable if f.is_audio_only), key=lambda f: f.audio_sort_key, reverse=True)
         combined = [f for f in usable if not f.is_video_only and not f.is_audio_only]
@@ -218,23 +243,62 @@ class YoutubeDownloaderPage(QWidget):
         self.video_format_combo.clear()
         self.video_format_combo.addItem("Best available", "bestvideo")
         for f in video_only:
-            self.video_format_combo.addItem(f.label, f.format_id)
+            self.video_format_combo.addItem(f"{f.label}{video_suffix}", f.format_id)
         if not video_only:
             # This source doesn't offer separate video-only streams - fall back
             # to combined video+audio formats (each already includes its own audio).
             for f in sorted(combined, key=lambda f: f.video_sort_key, reverse=True):
-                self.video_format_combo.addItem(f"{f.label} (includes audio)", f.format_id)
+                self.video_format_combo.addItem(f"{f.label} (includes audio){video_suffix}", f.format_id)
 
         self._has_separate_audio = bool(audio_only)
         self.audio_format_combo.clear()
         if audio_only:
             self.audio_format_combo.addItem("Best available", "bestaudio")
             for f in audio_only:
-                self.audio_format_combo.addItem(f.label, f.format_id)
+                self.audio_format_combo.addItem(f"{f.label}{audio_suffix}", f.format_id)
             self.audio_format_combo.setEnabled(True)
         else:
             self.audio_format_combo.addItem("Included in video stream", "")
             self.audio_format_combo.setEnabled(False)
+
+    def _start_playlist_formats_fetch(self, url: str, video_count: int):
+        self._playlist_total = video_count
+        self._playlist_fetch_token += 1
+        token = self._playlist_fetch_token
+
+        self.meta_label.setText(f"{video_count} videos - checking which qualities are shared by all of them…")
+        self.video_format_combo.clear()
+        self.video_format_combo.addItem("Best available", "bestvideo")
+        self.audio_format_combo.clear()
+        self.audio_format_combo.addItem("Best available", "bestaudio")
+        self.audio_format_combo.setEnabled(False)
+        self._has_separate_audio = False
+
+        self._playlist_thread = _PlaylistFormatsThread(url, self._cookies_file(), self)
+        self._playlist_thread.progress.connect(
+            lambda count, title, t=token: self._on_playlist_formats_progress(t, count, title))
+        self._playlist_thread.done.connect(
+            lambda formats, count, error, t=token: self._on_playlist_formats_done(t, formats, count, error))
+        self._playlist_thread.start()
+
+    def _on_playlist_formats_progress(self, token: int, checked_count: int, _title: str):
+        if token != self._playlist_fetch_token:
+            return
+        total = f"/{self._playlist_total}" if self._playlist_total else ""
+        self.meta_label.setText(f"Checking shared qualities… ({checked_count}{total} videos checked)")
+
+    def _on_playlist_formats_done(self, token: int, formats, video_count: int, error: str):
+        if token != self._playlist_fetch_token:
+            return
+        if error:
+            self.meta_label.setText(f"{self._playlist_total} videos - couldn't check shared qualities.")
+            self.meta_label.setToolTip(error)
+            return
+        if not formats:
+            self.meta_label.setText(f"{video_count} videos - no quality is shared by every video; using best available.")
+        else:
+            self.meta_label.setText(f"{video_count} videos - showing qualities shared by every video.")
+        self._populate_format_combos(formats, video_suffix=" (all videos)", audio_suffix=" (all videos)")
 
     def _build_format_selector(self) -> str:
         if self.video_format_combo.count() == 0:
@@ -272,7 +336,7 @@ class YoutubeDownloaderPage(QWidget):
             use_archive=self.archive_check.isChecked(),
             cookies_file=self._cookies_file(),
         )
-        label = f"YouTube download: {self._info.title if self._info and not self._info.is_playlist else url}"
+        label = f"YouTube download: {self._info.title if self._info else url}"
         job = Job(label=label, args=args, duration_sec=0.0, kind="ytdlp")
         self.ctx.job_queue.add(job)
 
