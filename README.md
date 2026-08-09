@@ -6,7 +6,7 @@
 
 A Windows media toolbox for converting, editing, merging, splitting, and downloading video, audio, and images with FFmpeg, yt-dlp, GPU acceleration, batch processing, presets, and a modern dark/light interface — all built on **ffmpeg** and **yt-dlp**.
 
-Full Release V1.0 (EXE Standalone) | [Download](https://drive.google.com/file/d/1sadXG1Vt5QuBCIVXXcoPYkea3ABQNW9J/view?usp=sharing) 
+Full Release V1.0a (EXE Standalone) | [Download](https://drive.google.com/file/d/1sadXG1Vt5QuBCIVXXcoPYkea3ABQNW9J/view?usp=sharing) 
 
 How to run:
 * Just extract and run exe.
@@ -15,7 +15,7 @@ How to run:
 ![Platform](https://img.shields.io/badge/platform-Windows-blue)
 ![Python](https://img.shields.io/badge/python-3.12-green)
 ![License](https://img.shields.io/badge/license-MIT-brightgreen)
-![Release](https://img.shields.io/badge/release-v1.0-orange)
+![Release](https://img.shields.io/badge/release-v1.0a-orange)
 ---
 
 For the code to work you need to download the following and place them in the bin directory.
