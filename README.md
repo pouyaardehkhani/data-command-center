@@ -6,7 +6,7 @@
 
 A Windows media toolbox for converting, editing, merging, splitting, and downloading video, audio, and images with FFmpeg, yt-dlp, GPU acceleration, batch processing, presets, and a modern dark/light interface — all built on **ffmpeg** and **yt-dlp**.
 
-Full Release V1.0a (EXE Standalone) | [Download](https://drive.google.com/file/d/1sadXG1Vt5QuBCIVXXcoPYkea3ABQNW9J/view?usp=sharing) 
+Full Release V1.0a (EXE Standalone) | [Download](https://drive.google.com/file/d/18eYj-iAYnpsV3eEQHOKhq_WPgFg_MUUm/view?usp=sharing) 
 
 How to run:
 * Just extract and run exe.
