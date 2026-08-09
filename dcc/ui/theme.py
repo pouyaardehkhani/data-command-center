@@ -1,7 +1,10 @@
 """Dark/light theme QSS, hot-swappable at runtime without restarting the app."""
 from __future__ import annotations
 
+import qtawesome as qta
 from PySide6.QtWidgets import QApplication
+
+from dcc.paths import user_data_dir
 
 _DARK_VARS = {
     "bg": "#1b1f26", "bg_alt": "#20242c", "panel": "#242833",
@@ -130,6 +133,28 @@ QListWidget, QTreeWidget {{
 QListWidget::item:selected {{ background-color: {accent}; color: {accent_text}; }}
 
 QCheckBox, QRadioButton {{ spacing: 8px; }}
+QCheckBox::indicator, QRadioButton::indicator {{
+    width: 16px;
+    height: 16px;
+    border: 1px solid {text_dim};
+    background-color: {input_bg};
+}}
+QCheckBox::indicator {{ border-radius: 4px; }}
+QRadioButton::indicator {{ border-radius: 8px; }}
+QCheckBox::indicator:hover, QRadioButton::indicator:hover {{
+    border: 1px solid {accent};
+}}
+QCheckBox::indicator:checked, QRadioButton::indicator:checked {{
+    background-color: {accent};
+    border: 1px solid {accent};
+}}
+QCheckBox::indicator:checked {{
+    image: url({check_icon});
+}}
+QCheckBox::indicator:disabled, QRadioButton::indicator:disabled {{
+    border: 1px solid {border};
+    background-color: {panel_alt};
+}}
 
 QSlider::groove:horizontal {{
     height: 5px;
@@ -176,8 +201,20 @@ QToolTip {{
 """
 
 
+def _checkmark_icon_path() -> str:
+    """Renders (and caches) a white checkmark glyph for the checked QCheckBox
+    indicator - QSS can't draw the native check mark once ::indicator has a
+    custom border/background, so we supply our own via qtawesome."""
+    path = user_data_dir() / "icons" / "checkmark.png"
+    if not path.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        qta.icon("fa5s.check", color="white").pixmap(14, 14).save(str(path))
+    return path.as_posix()
+
+
 def qss_for(theme: str) -> str:
-    vars_ = _DARK_VARS if theme == "dark" else _LIGHT_VARS
+    vars_ = dict(_DARK_VARS if theme == "dark" else _LIGHT_VARS)
+    vars_["check_icon"] = _checkmark_icon_path()
     return _QSS_TEMPLATE.format(**vars_)
 
 

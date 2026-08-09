@@ -29,6 +29,10 @@ def ytdlp_path() -> str:
     return str(bin_dir() / "yt-dlp.exe")
 
 
+def icon_path() -> str:
+    return str(app_root() / "resources" / "icon.ico")
+
+
 def user_data_dir() -> Path:
     base = os.environ.get("APPDATA", str(Path.home()))
     d = Path(base) / APP_ORG

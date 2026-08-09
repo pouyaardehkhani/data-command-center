@@ -6,6 +6,7 @@ datas = [
     ("bin/ffprobe.exe", "bin"),
     ("bin/yt-dlp.exe", "bin"),
     ("bin/FFMPEG_LICENSE.txt", "bin"),
+    ("resources/icon.ico", "resources"),
 ]
 datas += collect_data_files("qtawesome")
 
@@ -29,6 +30,7 @@ exe = EXE(
     [],
     exclude_binaries=True,
     name="DataCommandCenter",
+    icon="resources/icon.ico",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

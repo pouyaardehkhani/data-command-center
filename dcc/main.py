@@ -1,10 +1,12 @@
 import sys
 
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 
 from dcc import APP_NAME
 from dcc.app_context import build_context
 from dcc.core import settings as app_settings
+from dcc.paths import icon_path
 from dcc.ui.main_window import MainWindow
 from dcc.ui.theme import apply_theme
 
@@ -12,6 +14,7 @@ from dcc.ui.theme import apply_theme
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName(APP_NAME)
+    app.setWindowIcon(QIcon(icon_path()))
     # Force Fusion: our custom QSS (combo/spin box subcontrol styling in
     # particular) was designed and tested against Fusion. Left on the native
     # Windows style ("windowsvista"), Qt's subcontrol hit-testing for things
