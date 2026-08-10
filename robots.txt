@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pouyaardehkhani.github.io/data-command-center/sitemap.xml

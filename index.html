@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Command Center — Free Windows Video, Audio &amp; Image Toolbox (FFmpeg + yt-dlp)</title>
+<meta name="description" content="Data Command Center is a free Windows desktop app for converting, editing, merging, splitting and downloading video, audio and images. GPU-accelerated FFmpeg processing, a built-in YouTube downloader powered by yt-dlp, batch job queues, and presets — all in one tool.">
+<meta name="keywords" content="video converter, audio converter, ffmpeg gui, ffmpeg app, youtube downloader, yt-dlp gui, batch video converter, GPU video encoding, NVENC converter, windows media toolbox, video merger, video splitter, subtitle burner, picture converter, free video converter windows">
+<meta name="author" content="Pouya Ardehkhani">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#1b1f26">
+<link rel="canonical" href="https://pouyaardehkhani.github.io/data-command-center/">
+
+<!-- Favicons -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/mark-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/img/mark-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/mark-180.png">
+<link rel="manifest" href="site.webmanifest">
+
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Data Command Center">
+<meta property="og:title" content="Data Command Center — Free Windows Video, Audio &amp; Image Toolbox">
+<meta property="og:description" content="Convert, edit, merge, split and download video, audio and images — GPU-accelerated, batch-friendly, and built on FFmpeg + yt-dlp. Free for Windows.">
+<meta property="og:image" content="https://pouyaardehkhani.github.io/data-command-center/assets/img/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://pouyaardehkhani.github.io/data-command-center/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Data Command Center — Free Windows Video, Audio &amp; Image Toolbox">
+<meta name="twitter:description" content="Convert, edit, merge, split and download video, audio and images — GPU-accelerated, batch-friendly, and built on FFmpeg + yt-dlp. Free for Windows.">
+<meta name="twitter:image" content="https://pouyaardehkhani.github.io/data-command-center/assets/img/og-image.jpg">
+
+<link rel="stylesheet" href="assets/css/style.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Data Command Center",
+  "operatingSystem": "Windows 10, Windows 11",
+  "applicationCategory": "MultimediaApplication",
+  "applicationSubCategory": "Video Converter, Audio Converter, YouTube Downloader",
+  "description": "A free Windows desktop toolbox for converting, editing, merging, splitting and downloading video, audio and images, built on FFmpeg and yt-dlp with GPU-accelerated encoding, batch processing and presets.",
+  "softwareVersion": "1.0a",
+  "url": "https://pouyaardehkhani.github.io/data-command-center/",
+  "downloadUrl": "https://drive.google.com/file/d/18eYj-iAYnpsV3eEQHOKhq_WPgFg_MUUm/view?usp=sharing",
+  "image": "https://pouyaardehkhani.github.io/data-command-center/assets/img/og-image.jpg",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Pouya Ardehkhani"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is Data Command Center free?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. It's free to download and use. The source code is also available on GitHub." }
+    },
+    {
+      "@type": "Question",
+      "name": "What platforms does it run on?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Windows 10 and 11 only for now. It's built with PySide6 (Qt6); there is no macOS or Linux build at this time." }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to install FFmpeg myself?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Not if you use the standalone EXE release — it already bundles ffmpeg.exe, ffprobe.exe and yt-dlp.exe. You only need to download FFmpeg separately if you're running the app from source, since those binaries are too large to store in the GitHub repository." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it use my GPU for encoding?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. It auto-detects every GPU in your system (NVIDIA, AMD, Intel) and lists its hardware encoders, such as NVENC, AMF and QuickSync, ahead of and visually distinct from the CPU (software) encoders." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can it download YouTube playlists?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. The YouTube Downloader page is powered by yt-dlp and supports full playlists with item ranges, a download archive to skip already-downloaded videos, and cookie-file authentication for restricted videos. For playlists it also cross-checks every video's available formats so the quality you pick is guaranteed to apply to the whole playlist." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does my media get uploaded anywhere?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. All conversion, editing and processing happens locally on your machine through FFmpeg. The only network activity is the YouTube Downloader page talking to YouTube to fetch the video or playlist you asked for." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this affiliated with YouTube or FFmpeg?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Data Command Center is an independent, unofficial project. YouTube downloading is powered by the open-source yt-dlp project and media processing uses the open-source FFmpeg project; it is not affiliated with, endorsed by, or sponsored by YouTube, Google, or the FFmpeg team." }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-nav" id="site-nav">
+  <div class="container">
+    <a class="brand" href="#top">
+      <img src="assets/img/mark-48.png" alt="" width="30" height="30">
+      Data Command Center
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#features">Features</a>
+      <a href="#screenshots">Screenshots</a>
+      <a href="#setup">Get started</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://github.com/pouyaardehkhani/data-command-center">GitHub</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn" id="theme-toggle" type="button" aria-pressed="true" aria-label="Toggle light and dark theme" title="Toggle light / dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+      </button>
+      <a class="btn btn-primary" href="#download">Download</a>
+      <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="container">
+      <div class="hero-copy">
+        <span class="eyebrow">Free &middot; Windows 10/11 &middot; v1.0a</span>
+        <h1>One media toolbox for <span class="accent-text">video, audio &amp; images</span> — powered by FFmpeg &amp; yt-dlp</h1>
+        <p class="lead">Convert, edit, merge, split, crop and download media without juggling five different apps. Data Command Center wraps FFmpeg and yt-dlp in a fast, GPU-aware desktop UI with batch queues, presets, and a YouTube downloader built in.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary btn-lg" href="#download">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"></path></svg>
+            Download for Windows
+          </a>
+          <a class="btn btn-secondary btn-lg" href="https://github.com/pouyaardehkhani/data-command-center">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.98 5.24.98 11.52c0 5.02 3.26 9.28 7.79 10.78.57.1.78-.25.78-.55 0-.27-.01-1.16-.02-2.1-3.17.69-3.84-1.35-3.84-1.35-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.24 3.33.95.1-.74.4-1.24.72-1.53-2.53-.29-5.19-1.26-5.19-5.6 0-1.24.44-2.25 1.17-3.04-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.14 1.16a10.9 10.9 0 0 1 2.86-.38c.97 0 1.95.13 2.86.38 2.18-1.47 3.14-1.16 3.14-1.16.62 1.58.23 2.75.11 3.04.73.79 1.17 1.8 1.17 3.04 0 4.35-2.66 5.31-5.2 5.59.41.35.77 1.04.77 2.11 0 1.52-.01 2.75-.01 3.13 0 .3.2.66.79.55 4.52-1.51 7.78-5.76 7.78-10.78C23.02 5.24 18.27.5 12 .5z"/></svg>
+            View source on GitHub
+          </a>
+        </div>
+        <p class="hero-note">Standalone build includes FFmpeg, FFprobe and yt-dlp — just extract and run <code>DataCommandCenter.exe</code>. No install, no admin rights.</p>
+        <div class="badges" aria-label="Project badges">
+          <span class="badge">Platform: Windows</span>
+          <span class="badge">Python 3.12</span>
+          <span class="badge">License: MIT</span>
+          <span class="badge">Release: v1.0a</span>
+        </div>
+      </div>
+      <div class="hero-media">
+        <img src="assets/img/screenshots/full/video-converter.jpg" width="1600" height="866" alt="Data Command Center's Video Converter page, showing encoder, rate control, resolution, FPS and GPU options in dark mode" loading="eager">
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="container">
+      <div class="section-head">
+        <h2>Everything you'd normally need three apps for</h2>
+        <p>Video, audio and picture tools live side by side, sharing the same batch queue, preset system and GPU-aware encoder picker.</p>
+      </div>
+
+      <div class="feature-groups">
+        <div class="feature-group">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+            Video
+          </h3>
+          <ul>
+            <li><strong>Converter</strong><span>Batch conversion to any container/codec with full control over encoder, rate control, resolution, FPS, aspect ratio, filters, fades, anti-shake, denoise, sharpness, grain and more — plus a matching audio-track panel.</span></li>
+            <li><strong>Add Subtitle</strong><span>Soft-mux a toggleable subtitle track, or hard-burn it into the picture.</span></li>
+            <li><strong>Merger</strong><span>Join multiple video files into one.</span></li>
+            <li><strong>Splitter</strong><span>Extract the video-only and audio-only tracks from a file.</span></li>
+            <li><strong>Crop</strong><span>Cut a rectangular region out of the frame.</span></li>
+            <li><strong>Export Frames</strong><span>Pull stills out of a video by interval, count, or time range.</span></li>
+            <li><strong>YouTube Downloader</strong><span>Independent video/audio quality pickers with file size shown per option, MP4 preference, playlist support with item ranges and cross-playlist quality matching, a download archive, cookie-file auth, and a one-click yt-dlp self-updater.</span></li>
+          </ul>
+        </div>
+
+        <div class="feature-group">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+            Audio
+          </h3>
+          <ul>
+            <li><strong>Converter</strong><span>Encoder, sample rate, bitrate, channels, volume, fades, echo, denoise, reverse and multi-stream handling.</span></li>
+            <li><strong>Mixer</strong><span>Blend multiple tracks together with independent per-track volume.</span></li>
+            <li><strong>Joiner</strong><span>Concatenate multiple tracks into one file.</span></li>
+          </ul>
+        </div>
+
+        <div class="feature-group">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            Picture
+          </h3>
+          <ul>
+            <li><strong>Converter</strong><span>Format conversion (JPEG, PNG, WebP and more) with resolution control.</span></li>
+          </ul>
+        </div>
+
+        <div class="feature-group">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"></path></svg>
+            Platform
+          </h3>
+          <ul>
+            <li><strong>GPU-first encoding</strong><span>Auto-detects every GPU (NVIDIA / AMD / Intel) and lists its hardware encoders ahead of CPU ones.</span></li>
+            <li><strong>Presets</strong><span>Save, load and delete named setting profiles on every feature page.</span></li>
+            <li><strong>Contextual help</strong><span>A (?) next to every setting, plus a searchable Help page.</span></li>
+            <li><strong>Dark / light theme</strong><span>Switchable at runtime, no restart needed.</span></li>
+            <li><strong>Sequential job queue</strong><span>Batches process one file at a time with live progress, cancel and clear.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREENSHOTS -->
+  <section id="screenshots" class="section-alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>See every page</h2>
+        <p>Fourteen screens, one consistent interface — in both dark and light mode.</p>
+      </div>
+
+      <div class="shot-filters" role="tablist" aria-label="Filter screenshots by category">
+        <button class="shot-filter active" data-group="all" type="button">All</button>
+        <button class="shot-filter" data-group="video" type="button">Video</button>
+        <button class="shot-filter" data-group="audio" type="button">Audio</button>
+        <button class="shot-filter" data-group="picture" type="button">Picture</button>
+        <button class="shot-filter" data-group="app" type="button">App</button>
+      </div>
+
+      <div class="shot-grid" id="shot-grid">
+        <!-- Video -->
+        <figure class="shot-card" data-group="video" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/video-converter.jpg"
+                data-alt="Video Converter — encoder, rate control, resolution, FPS, GPU and filter options">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/video-converter.jpg" loading="lazy" alt="Video Converter page with encoder, rate control and resolution settings"></div>
+          <figcaption><p class="shot-title">Video Converter</p><span class="shot-tag">Batch encode, any codec</span></figcaption>
+        </figure>
+
+        <figure class="shot-card" data-group="video" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/video-subtitle.jpg"
+                data-alt="Add Subtitle page — soft-mux or hard-burn a subtitle track">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/video-subtitle.jpg" loading="lazy" alt="Add Subtitle page for soft-muxing or hard-burning subtitle tracks"></div>
+          <figcaption><p class="shot-title">Add Subtitle</p><span class="shot-tag">Soft-mux or hard-burn</span></figcaption>
+        </figure>
+
+        <figure class="shot-card" data-group="video" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/video-merger.jpg"
+                data-alt="Video Merger page — joins multiple video files into one">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/video-merger.jpg" loading="lazy" alt="Video Merger page for joining multiple video files into one"></div>
+          <figcaption><p class="shot-title">Merger</p><span class="shot-tag">Join clips into one file</span></figcaption>
+        </figure>
+
+        <figure class="shot-card" data-group="video" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/video-splitter.jpg"
+                data-alt="Video Splitter page — extracts video-only and audio-only tracks">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/video-splitter.jpg" loading="lazy" alt="Video Splitter page for extracting video-only and audio-only tracks"></div>
+          <figcaption><p class="shot-title">Splitter</p><span class="shot-tag">Pull tracks apart</span></figcaption>
+        </figure>
+
+        <figure class="shot-card" data-group="video" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/video-crop.jpg"
+                data-alt="Crop page — cut a rectangular region out of the video frame">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/video-crop.jpg" loading="lazy" alt="Video Crop page for cutting a rectangular region out of the frame"></div>
+          <figcaption><p class="shot-title">Crop</p><span class="shot-tag">Cut the frame down</span></figcaption>
+        </figure>
+
+        <figure class="shot-card" data-group="video" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/video-frames.jpg"
+                data-alt="Export Frames page — pull stills out of a video by interval, count or time range">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/video-frames.jpg" loading="lazy" alt="Export Frames page for pulling stills out of a video"></div>
+          <figcaption><p class="shot-title">Export Frames</p><span class="shot-tag">Video &rarr; stills</span></figcaption>
+        </figure>
+
+        <figure class="shot-card" data-group="video" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/youtube-downloader.jpg"
+                data-alt="YouTube Downloader page — quality pickers, playlist support and cookie-file auth">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/youtube-downloader.jpg" loading="lazy" alt="YouTube Downloader page with quality pickers and playlist support"></div>
+          <figcaption><p class="shot-title">YouTube Downloader</p><span class="shot-tag">Powered by yt-dlp</span></figcaption>
+        </figure>
+
+        <!-- Audio -->
+        <figure class="shot-card" data-group="audio" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/audio-converter.jpg"
+                data-alt="Audio Converter page — encoder, sample rate, bitrate and effects">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/audio-converter.jpg" loading="lazy" alt="Audio Converter page with encoder, sample rate and bitrate options"></div>
+          <figcaption><p class="shot-title">Audio Converter</p><span class="shot-tag">Encode, resample, effects</span></figcaption>
+        </figure>
+
+        <figure class="shot-card" data-group="audio" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/audio-mixer.jpg"
+                data-alt="Audio Mixer page — blends multiple tracks with per-track volume">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/audio-mixer.jpg" loading="lazy" alt="Audio Mixer page for blending multiple tracks together"></div>
+          <figcaption><p class="shot-title">Mixer</p><span class="shot-tag">Blend tracks together</span></figcaption>
+        </figure>
+
+        <figure class="shot-card" data-group="audio" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/audio-joiner.jpg"
+                data-alt="Audio Joiner page — concatenates multiple tracks into one file">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/audio-joiner.jpg" loading="lazy" alt="Audio Joiner page for concatenating multiple audio tracks"></div>
+          <figcaption><p class="shot-title">Joiner</p><span class="shot-tag">Concatenate tracks</span></figcaption>
+        </figure>
+
+        <!-- Picture -->
+        <figure class="shot-card" data-group="picture" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/picture-converter.jpg"
+                data-alt="Picture Converter page — image format conversion with resolution control">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/picture-converter.jpg" loading="lazy" alt="Picture Converter page for image format conversion"></div>
+          <figcaption><p class="shot-title">Picture Converter</p><span class="shot-tag">Format + resolution</span></figcaption>
+        </figure>
+
+        <!-- App -->
+        <figure class="shot-card" data-group="app" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/settings-dark.jpg"
+                data-alt="Settings page in dark mode, showing detected GPU hardware encoders">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/settings-dark.jpg" loading="lazy" alt="Settings page in dark mode with detected GPU hardware encoders"></div>
+          <figcaption><p class="shot-title">Settings — Dark mode</p><span class="shot-tag">GPU auto-detection</span></figcaption>
+        </figure>
+
+        <figure class="shot-card" data-group="app" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/settings-light.jpg"
+                data-alt="Settings page in light mode, showing detected GPU hardware encoders">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/settings-light.jpg" loading="lazy" alt="Settings page in light mode with detected GPU hardware encoders"></div>
+          <figcaption><p class="shot-title">Settings — Light mode</p><span class="shot-tag">Switchable at runtime</span></figcaption>
+        </figure>
+
+        <figure class="shot-card" data-group="app" tabindex="0" role="button"
+                data-full="assets/img/screenshots/full/help.jpg"
+                data-alt="Searchable Help page explaining every setting in the app">
+          <div class="thumb-wrap"><img src="assets/img/screenshots/thumb/help.jpg" loading="lazy" alt="Searchable Help page explaining every setting"></div>
+          <figcaption><p class="shot-title">Help</p><span class="shot-tag">Searchable, contextual</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- SETUP -->
+  <section id="setup">
+    <div class="container">
+      <div class="section-head">
+        <h2>Get started</h2>
+        <p>Two ways to run it: grab the standalone build, or run it from source.</p>
+      </div>
+
+      <div class="setup-grid">
+        <div class="setup-card">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            For everyone: standalone build
+          </h3>
+          <ol class="steps">
+            <li><strong>Download</strong> the v1.0a EXE release below.</li>
+            <li><strong>Extract</strong> the archive anywhere — it's a self-contained folder, no installer needed.</li>
+            <li><strong>Run</strong> <code>DataCommandCenter.exe</code>. FFmpeg, FFprobe and yt-dlp are already bundled inside.</li>
+          </ol>
+          <div class="note">Keep the <code>_internal</code> folder next to the .exe — the app needs it to run.</div>
+        </div>
+
+        <div class="setup-card">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            For developers: run from source
+          </h3>
+          <p style="color:var(--text-dim); font-size:14.5px; margin-top:-6px;">The repo includes <code>yt-dlp.exe</code>. <code>ffmpeg.exe</code> and <code>ffprobe.exe</code> aren't checked in — they're ~211MB each, over GitHub's 100MB limit — so grab a Windows build (e.g. the <a href="https://www.gyan.dev/ffmpeg/builds/" target="_blank" rel="noopener">"full" build from gyan.dev</a>) and drop both into <code>bin/</code> first.</p>
+          <pre><code>python -m venv .venv
+.venv\Scripts\pip install -r requirements.txt
+.venv\Scripts\python -m dcc.main</code></pre>
+          <div class="note">Building your own distributable is one line: <code>.\build.ps1</code> (runs PyInstaller via <code>DataCommandCenter.spec</code>).</div>
+        </div>
+      </div>
+
+      <div style="margin-top:40px;">
+        <div class="tech-strip">
+          <span class="tech-pill"><span class="dot"></span>PySide6 (Qt6)</span>
+          <span class="tech-pill"><span class="dot"></span>FFmpeg / FFprobe</span>
+          <span class="tech-pill"><span class="dot"></span>yt-dlp</span>
+          <span class="tech-pill"><span class="dot"></span>qtawesome</span>
+          <span class="tech-pill"><span class="dot"></span>PyInstaller</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLATFORM STRIP / TRUST -->
+  <section class="section-alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>Built to run entirely on your machine</h2>
+        <p>No accounts, no cloud uploads, no subscriptions. Your files never leave your computer.</p>
+      </div>
+      <div class="platform-strip">
+        <div class="platform-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          <h4>Local processing</h4>
+          <p>Every conversion runs through FFmpeg on your own hardware.</p>
+        </div>
+        <div class="platform-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect></svg>
+          <h4>GPU-aware</h4>
+          <p>NVENC, AMF and QuickSync detected and preferred automatically.</p>
+        </div>
+        <div class="platform-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M18 17V9M13 17V5M8 17v-4"></path></svg>
+          <h4>Batch queue</h4>
+          <p>Queue whole folders and let it process sequentially, unattended.</p>
+        </div>
+        <div class="platform-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.5 5.5 21l2-7.5L2 9h7z"></path></svg>
+          <h4>Presets</h4>
+          <p>Save your exact settings once, reuse them on every job after.</p>
+        </div>
+        <div class="platform-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          <h4>Contextual help</h4>
+          <p>A (?) next to every setting, plus a searchable Help page.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD CTA -->
+  <section id="download">
+    <div class="container">
+      <div class="cta-band">
+        <h2>Ready to try it?</h2>
+        <p>Free download for Windows 10/11 — standalone build, no install required.</p>
+        <div class="cta-actions">
+          <a class="btn btn-primary btn-lg" href="https://drive.google.com/file/d/18eYj-iAYnpsV3eEQHOKhq_WPgFg_MUUm/view?usp=sharing">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"></path></svg>
+            Download v1.0a (.exe)
+          </a>
+          <a class="btn btn-secondary btn-lg" href="https://github.com/pouyaardehkhani/data-command-center">Browse the source</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="section-alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Is Data Command Center free?<span class="chevron">&#9662;</span></summary>
+          <p>Yes — it's free to download and use. The source code is also available on GitHub.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What platforms does it run on?<span class="chevron">&#9662;</span></summary>
+          <p>Windows 10 and 11 only, for now. It's built with PySide6 (Qt6); there's no macOS or Linux build at this time.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do I need to install FFmpeg myself?<span class="chevron">&#9662;</span></summary>
+          <p>Not if you use the standalone EXE release — it already bundles <code>ffmpeg.exe</code>, <code>ffprobe.exe</code> and <code>yt-dlp.exe</code>. You only need to download FFmpeg separately if you're running the app from source, since those binaries are too large to store in the GitHub repository (over its 100MB file limit).</p>
+        </details>
+        <details class="faq-item">
+          <summary>Does it use my GPU for encoding?<span class="chevron">&#9662;</span></summary>
+          <p>Yes. It auto-detects every GPU in your system (NVIDIA, AMD, Intel) and lists its hardware encoders — NVENC, AMF, QuickSync — ahead of, and visually distinct from, the CPU (software) encoders.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Can it download YouTube playlists?<span class="chevron">&#9662;</span></summary>
+          <p>Yes. The YouTube Downloader page is powered by yt-dlp and supports full playlists with item ranges, a download archive to skip already-downloaded videos, and cookie-file authentication for restricted videos. For playlists, it also cross-checks every video's available formats so the quality you pick is guaranteed to apply across the whole playlist.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Does my media get uploaded anywhere?<span class="chevron">&#9662;</span></summary>
+          <p>No. All conversion, editing and processing happens locally on your machine through FFmpeg. The only network activity is the YouTube Downloader page talking to YouTube to fetch the video or playlist you asked for.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Is this affiliated with YouTube or FFmpeg?<span class="chevron">&#9662;</span></summary>
+          <p>No. Data Command Center is an independent, unofficial project. YouTube downloading is powered by the open-source yt-dlp project and media processing uses the open-source FFmpeg project; it is not affiliated with, endorsed by, or sponsored by YouTube, Google, or the FFmpeg team.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <img src="assets/img/mark-48.png" alt="" width="26" height="26">
+          Data Command Center
+        </div>
+        <p style="color:var(--text-dim); font-size:14px; max-width:38ch;">A Windows media toolbox for converting, editing, merging, splitting and downloading video, audio and images — built on FFmpeg and yt-dlp.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Project</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#screenshots">Screenshots</a></li>
+          <li><a href="#setup">Get started</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Links</h4>
+        <ul>
+          <li><a href="https://github.com/pouyaardehkhani/data-command-center">GitHub repository</a></li>
+          <li><a href="https://github.com/pouyaardehkhani/data-command-center/issues">Report an issue</a></li>
+          <li><a href="https://drive.google.com/file/d/18eYj-iAYnpsV3eEQHOKhq_WPgFg_MUUm/view?usp=sharing">Download v1.0a</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="year"></span> Pouya Ardehkhani. Not affiliated with YouTube, Google, or the FFmpeg project. FFmpeg/FFprobe are GPL-licensed; yt-dlp is Unlicensed; PySide6/Qt is LGPLv3 — see the repository for full attribution.</p>
+      <p><a href="https://github.com/pouyaardehkhani/data-command-center">github.com/pouyaardehkhani/data-command-center</a></p>
+    </div>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Screenshot preview">
+  <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close preview">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+  </button>
+  <button class="lightbox-prev" id="lightbox-prev" type="button" aria-label="Previous screenshot">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+  </button>
+  <button class="lightbox-next" id="lightbox-next" type="button" aria-label="Next screenshot">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </button>
+  <figure>
+    <img id="lightbox-img" src="" alt="">
+    <figcaption id="lightbox-caption"></figcaption>
+  </figure>
+</div>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
